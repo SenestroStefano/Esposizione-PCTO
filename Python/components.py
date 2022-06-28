@@ -1218,8 +1218,6 @@ class GUI():
 
 		self.DESCR1_TEXT = get_font(3*int(GLOB.MULT)).render("Default", True, "White")
 		self.DESCR1_POS = (self.inventory.get_width() + 10 * GLOB.MULT, 120 * GLOB.MULT)
-  
-		self.inventory_sound = mixer.Sound("suoni/menu-sound.wav")
 		self.inventory_flag = False
   
 		self.door_sound = mixer.Sound("suoni/door.wav")
@@ -1227,7 +1225,6 @@ class GUI():
 
 	def show(self):
      
-		self.inventory_sound.set_volume(0.3*GLOB.AU)
 		self.door_sound.set_volume(0.4*GLOB.AU)
 		self.door_sound_locked.set_volume(0.4*GLOB.AU)
 
