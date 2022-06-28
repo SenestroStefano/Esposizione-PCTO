@@ -1,7 +1,7 @@
 import pygame, os, random, ast
 from pygame.locals import *
 
-TITLE = "The Lost Keys"
+TITLE = "PCTO Project"
 
 # Valori di proporzione
 
@@ -33,10 +33,10 @@ Cam_visible = False
 OptionDebug = True
 Debug = False
 ShowGrid = False
-ShowFps = True
+ShowFps = False
 ShowDropFrames = False
-ShowScore = True
-ShowRecord = True
+ShowScore = False
+ShowRecord = False
 LoadCollisions = True
 
 Mappa = []
@@ -358,7 +358,7 @@ def setResources():
             
     }
     
-    ShowIntro = False
+    ShowIntro = True
     
     MonsterActualFloor = "1-PianoTerra"
     MonsterActualRoom = "Corridoio1"

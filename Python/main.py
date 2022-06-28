@@ -3,11 +3,10 @@ import pygame, os, sys, random, re
 
 #Importo i vari file e classi necessarie
 import giocatore, menu, camera, debug, collisioni
-from components import Bar, Button, Dialoghi, Delay, Dialoghi_Interattivi, Risultato, Timer, GUI, MiniMap, Code, Pc
+from components import Bar, Button, Dialoghi, Delay, Dialoghi_Interattivi, Risultato, Timer, GUI, PC
 from pygame import mixer
 from pyvidplayer import Video
 from animazione import Transizione
-from mostro import Keeper
 import stanze
 
 # Importo le variabili Globali
@@ -120,12 +119,6 @@ def inizializza():
     console = debug.Debug()
 
 
-
-    if GLOB.MonsterCanSpawn:
-        global mostro
-        mostro = Keeper((GLOB.MonsterXSpawn, GLOB.MonsterYSpawn), (20 * GLOB.MULT, 0.45 * GLOB.MULT))
-
-
 def load_collisions(path):
 
     def CaricaLista(file):
@@ -158,7 +151,7 @@ def load_collisions(path):
 
 def controllo_condizioni():
     
-    if GLOB.PlayerIsMoving: 
+    if GLOB.PlayerIsMoving:
         player.setBow(False)
     
     
@@ -180,84 +173,7 @@ def controllo_condizioni():
         if GLOB.FlagSecRand:
             GLOB.Val_sec = random.randint(1, abs(int((timer.getSeconds() - GLOB.SecondDiffPos + 1))))
             GLOB.FlagSecRand = False
-        
-        if int(timer.getSeconds()) == GLOB.Val_sec and not mostro.IseePlayer and not mostro.aggr and GLOB.Stanza != GLOB.MonsterActualRoom:
-            valuex, valuey = 368, 142
-            
-            if GLOB.MonsterActualFloor == "1-PianoTerra":
-                if GLOB.MonsterActualRoom == "Fisica":
-                    valuex, valuey = 200, 20
-                    mostro.monster_ai_brain = 3
-                    
-                elif GLOB.MonsterActualRoom == "Archivio":
-                    valuex, valuey = 14, 166
-                    mostro.monster_ai_brain = 1
-                    
-                elif GLOB.MonsterActualRoom == "Chimica":
-                    valuex, valuey = 514, 28
-                    mostro.monster_ai_brain = 1
-                
-            if GLOB.MonsterActualFloor == "2-PrimoPiano":
-                if GLOB.MonsterActualRoom == "AulaProfessori":
-                    valuex, valuey = 652, 166
-                    mostro.monster_ai_brain = 2
-                    
-                if GLOB.MonsterActualRoom == "WC-Femmine":
-                    valuex, valuey = 652, 264
-                    mostro.monster_ai_brain = 2
-                    
-                if GLOB.MonsterActualRoom == "AulaMagna":
-                    valuex, valuey = 512, 254
-                    mostro.monster_ai_brain = 4
-                    
-                if GLOB.MonsterActualRoom == "1A":
-                    valuex, valuey = 368, 254
-                    mostro.monster_ai_brain = 4
-                       
-                if GLOB.MonsterActualRoom == "1D":
-                    valuex, valuey = 248, 254
-                    mostro.monster_ai_brain = 4
-                    
-                if GLOB.MonsterActualRoom == "WC-Maschi":
-                    valuex, valuey = 32, 254
-                    mostro.monster_ai_brain = 4
-                    
-                if GLOB.MonsterActualRoom == "LabInfo":
-                    valuex, valuey = 16, 188
-                    mostro.monster_ai_brain = 1
-                    
-            if GLOB.MonsterActualFloor == "3-SecondoPiano":
-                if GLOB.MonsterActualRoom == "AulaVideo":
-                    valuex, valuey = 648, 166
-                    mostro.monster_ai_brain = 2
-                    
-                if GLOB.MonsterActualRoom == "4A":
-                    valuex, valuey = 276, 248
-                    mostro.monster_ai_brain = 4
-                    
-                if GLOB.MonsterActualRoom == "LabInformatica":
-                    valuex, valuey = 178, 248
-                    mostro.monster_ai_brain = 4
-                    
-                if GLOB.MonsterActualRoom == "Ripostiglio":
-                    valuex, valuey = 80, 72
-                    mostro.monster_ai_brain = 1
-                    
-            GLOB.MonsterHasChangedRoom = True
-            GLOB.MonsterActualRoom = "Corridoio" + str(GLOB.MonsterActualFloor[0])
-            
-            mostro.x = valuex * GLOB.MULT
-            mostro.y = valuey * GLOB.MULT
-            mostro.IseePlayer = False
-            mostro.aggr = False
-            mostro.IAttacking = False
-            mostro.contatore_collisioni = 0
-            mostro.delayInteract.ReStart()
-            mostro.character_update(0)
-            mostro.flag_interact = False
-            
-            if GLOB.Stanza == GLOB.MonsterActualRoom and GLOB.Piano == GLOB.MonsterActualFloor:
-                Gui.door_sound.play()
+    
     
     if not GLOB.PlayerHasPressedButton:
         player.setAllkeys(False)
@@ -266,7 +182,6 @@ def controllo_condizioni():
     if len(GLOB.enigmi_risolti) > 0 and GLOB.MonsterIntro and animazione.iFinished and not animazione.flag_caricamento:
         
         if messaggio_a_schermo.isFinished:
-            mostro.Sound_Angry.fadeout(2200)
             testo = "Che cos'era quello strano suono?|Proveniva dall'ingresso principale!"
             
             testo = testo.split("|")
@@ -276,34 +191,22 @@ def controllo_condizioni():
                 dialogo.stampa()
                 
             GLOB.MonsterIntro = False
-        else:
-            
-            if not GLOB.MonsterSpawning:
-                mostro.Sound_Angry.play()    
-                GLOB.MonsterSpawning = True
-                SetPlayer_speed()
 
     if GLOB.Stanza == GLOB.MonsterActualRoom and GLOB.Piano == GLOB.MonsterActualFloor:
         GLOB.MonsterCanChangeRoom = True
                 
     if (GLOB.ShowComand or GLOB.ShowIntro) and not animazione.flag_caricamento:
-        testo1 = "Ciao! Io sono la prof. Dalbesio e saro' la tua guida di questo viaggio!|"
-        testo2 = "Per muoverti clicca le freccie direzionali o WASD|Per correre tieni premuto SHIFT|"
-        testo3 = "Per aprire l'inventario premi TAB|Per interagire con gli oggetti premere E|"
-        testo4 = "Nei vari enigmi che troverai pensa con calma, e trova tutti gli indizi|"
-        testo5 = "Se durante gli enigmi avrai bisogno di un aiuto premi 'I'"
-        testo6 = "|Detto questo, hai un compito, trova la via di fuga contenuta in una chiavetta, cerca le pagine e vinci! Buona fortuna!"
-        
-        if GLOB.ShowIntro:
-            testo = testo1 + testo2 + testo3 + testo4 + testo5 + testo6
-        else:
-            testo = testo2 + testo3 + testo5
+        testo1 = "Ciao a tutti! Sono Senestro Stefano e oggi vi prensentero' il mio progetto!!|"
+        testo2 = "Tutto quello che vedrete lo ho realizzato interamente con Pygame la libreria per eccellenza per i videogiochi di Python|"
+        testo3 = "Spero che la presentazione sia di vostro gradimento!"
+
+        testo = testo1 + testo2 + testo3
 
 
         testo = testo.split("|")
 
         for frase in testo:
-            d = Dialoghi("Dalbesio", frase, 4)
+            d = Dialoghi("Senex", frase, 4)
             d.stampa()
 
         GLOB.ShowIntro = False
@@ -368,9 +271,6 @@ def Stampa_messaggio():
     except NameError:
         pass
 
-    if timer.getMinutes() == 0 and timer.getSeconds() < 20:
-        cam.screen_shake()
-
 def disegna():
 
     timer.Start()
@@ -387,18 +287,12 @@ def disegna():
     if not GLOB.PlayerIsHidden:
         player.update()
 
-    if animazione.iFinished and GLOB.MonsterCanSpawn and animazione.iFinished and GLOB.MonsterSpawning and GLOB.Stanza == GLOB.MonsterActualRoom and GLOB.Piano == GLOB.MonsterActualFloor:
-        mostro.update()
-
     collisions.render_objects((0,0))
 
     stanze.caricaStanza()
 
     if not GLOB.PlayerIsHidden:
         player.load_playerSurface()
-
-    if animazione.iFinished and GLOB.MonsterCanSpawn and animazione.iFinished and GLOB.MonsterSpawning and GLOB.Stanza == GLOB.MonsterActualRoom and GLOB.Piano == GLOB.MonsterActualFloor:
-        mostro.load_monsterSurface()
 
     animazione.disegna()
 
@@ -644,18 +538,11 @@ def main():
                         GLOB.MonsterSpawning = True
                     else:
                         GLOB.MonsterSpawning = False
-                        
-                        
-                if event.key == pygame.K_h and GLOB.Debug:
-                    MiniMap().update()
                     
                 if event.key == pygame.K_g and GLOB.Debug:
                     
                     if GLOB.MonsterCanAttack:
                         GLOB.MonsterCanAttack = False
-                        mostro.IAttacking = False
-                        mostro.IseePlayer = False
-                        mostro.aggr = False
                     else:
                         GLOB.MonsterCanAttack = True
 
@@ -810,11 +697,6 @@ def pausa():
                 GLOB.TimerMin, GLOB.TimerSec = timer.getMinutes(), timer.getSeconds()
                 GLOB.PlayerXSpawn, GLOB.PlayerYSpawn = player.x / GLOB.MULT, player.y / GLOB.MULT
                 GLOB.CamXSpawn, GLOB.CamYSpawn = cam.x / GLOB.MULT, cam.y / GLOB.MULT
-                GLOB.MonsterXSpawn, GLOB.MonsterYSpawn = mostro.x / GLOB.MULT, mostro.y / GLOB.MULT
-                
-                GLOB.MonsterHasSeenPlayer = mostro.IseePlayer
-                GLOB.MonsterAggr = mostro.aggr
-                GLOB.MonsterIsAttacking = mostro.IAttacking
                 
                 GLOB.SaveGame()
 
@@ -828,7 +710,8 @@ def pausa():
                      options_audio()
 
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    menu.main_menu()
+                    pygame.quit()
+                    sys.exit()
 
         GLOB.screen.blit(PAUSE_TEXT, PAUSE_RECT)
 
@@ -992,11 +875,8 @@ def jump_scare():
 def game_over():
     
     mixer.music.fadeout(1000)
-    sfondo = pygame.image.load("assets/gameover.png").convert()
+    sfondo = pygame.image.load("assets/tuono.png").convert()
     sfondo = pygame.transform.scale(sfondo, (sfondo.get_width() * GLOB.MULT, sfondo.get_height() * GLOB.MULT))
-
-
-    jump_scare()
 
     restarta = False
 
@@ -1006,10 +886,10 @@ def game_over():
     i = -1
     z = -1
     
-    testo1 = "GAME"
+    testo1 = "TEMPO"
     t1 = ""
     
-    testo2 = "OVER"
+    testo2 = "SCADUTO"
     t2 = ""
     
     suono = mixer.Sound("suoni/char-sound.wav")
@@ -1036,7 +916,7 @@ def game_over():
 
     delay = Delay(0.4, stampa)
 
-    while not restarta and VideoFinito:  
+    while not restarta:  
 
         delay.Infinite()
         
@@ -1050,10 +930,10 @@ def game_over():
 
 
         PLAY_BUTTON = Button(image=None, pos=(GLOB.screen_width/2, posy * GLOB.MULT), 
-            text_input="RESTART", font=menu.get_font(8*int(GLOB.MULT)), base_color="#d7fcd4", hovering_color="White", scale=2)
+            text_input="RESTART", font=menu.get_font(8*int(GLOB.MULT)), base_color="Black", hovering_color="Gray", scale=2)
         
         QUIT_BUTTON = Button(image=None, pos=(GLOB.screen_width/2, (posy + distanza_riga) * GLOB.MULT), 
-                            text_input="BACK TO MENU", font=menu.get_font(8*int(GLOB.MULT)), base_color="#d7fcd4", hovering_color="White", scale=2)
+                            text_input="BACK TO MENU", font=menu.get_font(8*int(GLOB.MULT)), base_color="Black", hovering_color="Gray", scale=2)
 
         for event in pygame.event.get():
             keys_pressed = pygame.key.get_pressed()
@@ -1064,7 +944,8 @@ def game_over():
 
             if keys_pressed[pygame.K_ESCAPE] or (event.type == pygame.MOUSEBUTTONDOWN and QUIT_BUTTON.checkForInput(MENU_MOUSE_POS)):
                 GLOB.isGameRunning = False
-                menu.main_menu()
+                pygame.quit()
+                sys.exit()
 
             if keys_pressed[pygame.K_RETURN] or (event.type == pygame.MOUSEBUTTONDOWN and PLAY_BUTTON.checkForInput(MENU_MOUSE_POS)):
                 pygame.mouse.set_visible(False)
@@ -1074,20 +955,20 @@ def game_over():
         GLOB.screen.blit(sfondo, (0, 0))
 
 
-        altezza = 6 * GLOB.MULT
+        altezza = 2 * GLOB.MULT
         size = 20
 
-        distanza = 40 * GLOB.MULT
-        distanza_riga = 20 * GLOB.MULT
+        distanza = 10 * GLOB.MULT
+        distanza_riga = 30 * GLOB.MULT
 
     
-        GAME_TEXT = get_font(size*int(GLOB.MULT)).render(t1, True, "Yellow")
+        GAME_TEXT = get_font(size*int(GLOB.MULT)).render(t1, True, "#0a0a0a")
         GAME_POS = (GLOB.screen_width/2 - GAME_TEXT.get_width()/2, GLOB.screen_height/3 - GAME_TEXT.get_height()/2 + distanza)
 
         CGAME_TEXT = get_font(size*int(GLOB.MULT)).render(t1, True, "Black")
         CGAME_POS = (GLOB.screen_width/2 - CGAME_TEXT.get_width()/2, GLOB.screen_height/3 - CGAME_TEXT.get_height()/2 + distanza + altezza)
 
-        OVER_TEXT = get_font(size*int(GLOB.MULT)).render(t2, True, "Red")
+        OVER_TEXT = get_font(size*int(GLOB.MULT)).render(t2, True, "#424742")
         OVER_POS = (GLOB.screen_width/2 - OVER_TEXT.get_width()/2, GLOB.screen_height/3 - OVER_TEXT.get_height()/2 + distanza + distanza_riga)
 
         COVER_TEXT = get_font(size*int(GLOB.MULT)).render(t2, True, "Black")
@@ -1107,120 +988,6 @@ def game_over():
 
         clock.tick(GLOB.FPS)
         pygame.display.flip()
-
-
-
-#Funzione GAME WIN
-def game_win():
-    mixer.music.fadeout(1500)
-    
-    sfondo = pygame.image.load("assets/victory.png").convert()
-    sfondo = pygame.transform.scale(sfondo, (sfondo.get_width() * GLOB.MULT, sfondo.get_height() * GLOB.MULT))
-
-    restarta = False
-
-    pygame.mouse.set_visible(True)
-
-    d = int(((timer.getMinutes() * 60 + timer.getSeconds()) * 1.6) + 0.1)
-
-    var_win = 300 + d
-    
-    GLOB.score += var_win
-
-    if int(GLOB.Record) < int(GLOB.score):
-
-        GLOB.Record = GLOB.score
-        
-        os.system("attrib -h score.txt")
-
-        with open('score.txt', 'w') as f:
-            f.write("Record:\n")
-            f.write(str(GLOB.Record))
-            f.close()
-            
-        os.system("attrib +h score.txt")
-            
-    while not restarta:
-
-        # Ottengo la posizione corrente del cursore del mouse
-        MENU_MOUSE_POS = pygame.mouse.get_pos()
-
-
-        distanza_riga = 30
-        posy = 150
-
-
-        PLAY_BUTTON = Button(image=None, pos=(GLOB.screen_width/2, posy * GLOB.MULT), 
-            text_input="RESTART", font=menu.get_font(8*int(GLOB.MULT)), base_color="#d7fcd4", hovering_color="White", scale=2)
-        
-        QUIT_BUTTON = Button(image=None, pos=(GLOB.screen_width/2, (posy + distanza_riga) * GLOB.MULT), 
-                            text_input="BACK TO MENU", font=menu.get_font(8*int(GLOB.MULT)), base_color="#d7fcd4", hovering_color="White", scale=2)
-
-        for event in pygame.event.get():
-            keys_pressed = pygame.key.get_pressed()
-            
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-            if keys_pressed[pygame.K_ESCAPE] or (event.type == pygame.MOUSEBUTTONDOWN and QUIT_BUTTON.checkForInput(MENU_MOUSE_POS)):
-                GLOB.isGameRunning = False
-                menu.main_menu()
-
-            if keys_pressed[pygame.K_RETURN] or (event.type == pygame.MOUSEBUTTONDOWN and PLAY_BUTTON.checkForInput(MENU_MOUSE_POS)):
-                pygame.mouse.set_visible(False)
-                restarta = True
-                inizializza()
-
-        GLOB.screen.blit(sfondo, (0, 0))
-
-
-        altezza = 5 * GLOB.MULT
-        size = 20
-
-        distanza = 40 * GLOB.MULT
-        distanza_riga = 20 * GLOB.MULT
-
-        starty = 25 * GLOB.MULT
-
-        SCORE_TEXT = get_font(7*int(GLOB.MULT)).render("score: "+str(GLOB.score), True, "White")
-        SCORE_POS = (GLOB.screen_width/2 - SCORE_TEXT.get_width()/2, starty + 90 * GLOB.MULT)
-
-        RECORD_TEXT = get_font(7*int(GLOB.MULT)).render("record: "+str(GLOB.Record), True, "White")
-        RECORD_POS = (GLOB.screen_width/2 - RECORD_TEXT.get_width()/2, starty + 100 * GLOB.MULT)
-
-        GLOB.screen.blit(SCORE_TEXT, SCORE_POS)
-        GLOB.screen.blit(RECORD_TEXT, RECORD_POS)
-
-    
-        GAME_TEXT = get_font(size*int(GLOB.MULT)).render("HAI", True, "White")
-        GAME_POS = (GLOB.screen_width/2 - GAME_TEXT.get_width()/2, starty + distanza)
-
-        CGAME_TEXT = get_font(size*int(GLOB.MULT)).render("HAI", True, "Black")
-        CGAME_POS = (GLOB.screen_width/2 - CGAME_TEXT.get_width()/2, starty + distanza + altezza)
-
-        OVER_TEXT = get_font(size*int(GLOB.MULT)).render("VINTO", True, "Gray")
-        OVER_POS = (GLOB.screen_width/2 - OVER_TEXT.get_width()/2, starty + distanza + distanza_riga)
-
-        COVER_TEXT = get_font(size*int(GLOB.MULT)).render("VINTO", True, "Black")
-        COVER_POS = (GLOB.screen_width/2 - COVER_TEXT.get_width()/2, starty + distanza + distanza_riga + altezza)
-
-        GLOB.screen.blit(CGAME_TEXT, CGAME_POS)
-        GLOB.screen.blit(COVER_TEXT, COVER_POS)
-
-        GLOB.screen.blit(GAME_TEXT, GAME_POS)
-        GLOB.screen.blit(OVER_TEXT, OVER_POS)
-
-		
-        for button in [PLAY_BUTTON, QUIT_BUTTON]:
-            button.changeColor(MENU_MOUSE_POS)
-            button.update(GLOB.screen)
-
-
-        clock.tick(GLOB.FPS)
-        pygame.display.flip()
-
-
 
 # se volessi importare il file non verrebbe autoeseguito automaticamente
 if __name__ == "__main__":

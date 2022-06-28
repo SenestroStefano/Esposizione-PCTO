@@ -46,6 +46,13 @@ class Video:
         self.frames = 0
         self.active = True
         
+    def pause(self):
+        
+        if self.video.get_pause():
+            self.video.set_pause(False)
+        else:
+            self.video.set_pause(True)
+        
     def close(self):
         self.video.close_player()
         self.active = False

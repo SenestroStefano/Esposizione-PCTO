@@ -226,7 +226,6 @@ def testa():
             if GLOB.Stanza != GLOB.MonsterActualRoom:
                 GLOB.MonsterActualRoom = "Chimica"
                 GLOB.MonsterActualFloor = "1-PianoTerra"
-                main.mostro.evento = "porta"
                 GLOB.MonsterHasChangedRoom = True
 
         if GLOB.Stanza == "WC-Femmine":
@@ -242,7 +241,6 @@ def testa():
                 if GLOB.Stanza != GLOB.MonsterActualRoom:
                     GLOB.MonsterActualRoom = "WC-Femmine"
                     GLOB.MonsterActualFloor = "2-PrimoPiano"
-                    main.mostro.evento = "porta"
                     GLOB.MonsterHasChangedRoom = True
 
         if GLOB.Stanza == "AulaMagna":
@@ -251,7 +249,6 @@ def testa():
             if GLOB.Stanza != GLOB.MonsterActualRoom and len(GLOB.enigmi_risolti) > 1:
                 GLOB.MonsterActualRoom = "AulaMagna"
                 GLOB.MonsterActualFloor = "2-PrimoPiano"
-                main.mostro.evento = "porta"
                 GLOB.MonsterHasChangedRoom = True
 
         if GLOB.Stanza == "1A":
@@ -272,7 +269,6 @@ def testa():
             if GLOB.Stanza != GLOB.MonsterActualRoom:
                 GLOB.MonsterActualRoom = "Chimica"
                 GLOB.MonsterActualFloor = "1-PianoTerra"
-                main.mostro.evento = "porta"
                 GLOB.MonsterHasChangedRoom = True
 
         if GLOB.Stanza == "LabInfo":
@@ -290,7 +286,6 @@ def testa():
             if GLOB.Stanza != GLOB.MonsterActualRoom:
                 GLOB.MonsterActualRoom = "Default"
                 GLOB.MonsterActualFloor = "2-PrimoPiano"
-                main.mostro.evento = "porta"
                 GLOB.MonsterHasChangedRoom = True
                 
         if GLOB.Stanza == "Archivio":
@@ -301,8 +296,6 @@ def testa():
             if GLOB.Stanza != GLOB.MonsterActualRoom:
                 GLOB.MonsterActualRoom = "Corridoio"
                 GLOB.MonsterActualFloor = "1-PianoTerra"
-                main.mostro.evento = "porta-8"
-                main.mostro.IseePlayer = True
         
         if testo != "Default":
             testo = testo.split("|")
@@ -313,39 +306,7 @@ def testa():
         GLOB.PlayerReset = True
 
 
-    if main.player.evento == "mappa":
-        main.MiniMap().update()
-        main.player.setAllkeys(False)
-        main.SetPlayer_speed()
-
-
     def piano():
-        
-        if GLOB.MonsterCanSpawn:
-        
-            if main.mostro.evento == "piano-0":
-                GLOB.MonsterActualFloor = "0-PianoSegreto"
-                
-            elif main.mostro.evento == "piano-1":
-                GLOB.MonsterActualFloor = "1-PianoTerra"
-                
-            elif main.mostro.evento == "piano-2":
-                GLOB.MonsterActualFloor = "2-PrimoPiano"
-                
-            elif main.mostro.evento == "piano-3":
-                GLOB.MonsterActualFloor = "3-SecondoPiano"
-                
-            if type(main.mostro.evento) == str:
-                if "piano" in main.mostro.evento:
-                    GLOB.MonsterActualRoom = ""
-                    main.mostro.evento = "porta"
-                    main.mostro.IseePlayer = False
-                    main.mostro.aggr = False
-                    main.mostro.IAttacking = False
-                    GLOB.MonsterHasChangedRoom = True
-                    
-                    main.mostro.evento = None
-        
 
         if main.player.evento == "piano-0":
             GLOB.Piano = "0-PianoSegreto"
@@ -397,136 +358,11 @@ def testa():
 
     def porte():
         
-        if GLOB.MonsterCanSpawn:
-        
-            if not "Corridoio" in GLOB.MonsterActualRoom:
-                
-                valuex, valuey = 0, 0
-                
-                if GLOB.MonsterActualFloor == "1-PianoTerra":
-                    valuex, valuey =  342, 114
-                    
-                if GLOB.MonsterActualFloor == "2-PrimoPiano" or GLOB.MonsterActualFloor == "3-SecondoPiano":
-                    valuex, valuey = 368, 142
-                
-                if main.mostro.evento != None:
-                    
-                    if "porta" in main.mostro.evento:
-                        
-                        main.mostro.evento = None
-                        GLOB.MonsterHasChangedRoom = True
-                        GLOB.MonsterActualRoom = "Corridoio" + str(GLOB.MonsterActualFloor[0])
-                        
-                        main.mostro.x = valuex * GLOB.MULT
-                        main.mostro.y = valuey * GLOB.MULT
-                        
-                        if GLOB.Stanza == GLOB.MonsterActualRoom:
-                            main.Gui.door_sound.play()
-                            
-                        GLOB.SecondDiffPos = 10
-                        
-                    try:
-                        if "porta-" in main.mostro.evento:
-                            GLOB.FlagSecRand = True
-                    
-                    except TypeError:
-                        pass
-                        
-            
-            if main.mostro.evento == "porta-0":
-                main.mostro.evento = None
-                GLOB.MonsterHasChangedRoom = True
-                
-                if GLOB.MonsterActualFloor == "1-PianoTerra":
-                    
-                    if "Corridoio" in GLOB.MonsterActualRoom:
-                        GLOB.MonsterActualRoom = "Fisica"
-                        
-                        main.mostro.x = 344 * GLOB.MULT
-                        main.mostro.y = 188 * GLOB.MULT
-                        
-                main.Gui.door_sound.play()
-                
-                
-            if main.mostro.evento == "porta-5":
-                main.mostro.evento = None
-                GLOB.MonsterHasChangedRoom = True
-                
-                if GLOB.MonsterActualFloor == "2-PrimoPiano":
-                    
-                    if "Corridoio" in GLOB.MonsterActualRoom:
-                        GLOB.MonsterActualRoom = "1D"
-                        
-                        main.mostro.x = 376 * GLOB.MULT
-                        main.mostro.y = 202 * GLOB.MULT
-                        
-                main.Gui.door_sound.play()
-                
-            if main.mostro.evento == "porta-7":
-                main.mostro.evento = None
-                GLOB.MonsterHasChangedRoom = True
-                
-                if GLOB.MonsterActualFloor == "3-SecondoPiano":
-                    
-                    if "Corridoio" in GLOB.MonsterActualRoom:
-                        GLOB.MonsterActualRoom = "AulaVideo"
-                        
-                        main.mostro.x = 334 * GLOB.MULT
-                        main.mostro.y = 176 * GLOB.MULT
-                        
-                main.Gui.door_sound.play()
-                
-            
-            if main.mostro.evento == "porta-8":
-                main.mostro.evento = None
-                GLOB.MonsterHasChangedRoom = True
-                
-                if GLOB.MonsterActualFloor == "1-PianoTerra":
-                    
-                    if "Corridoio" in GLOB.MonsterActualRoom:
-                        GLOB.MonsterActualRoom = "Archivio"
-                        
-                        main.mostro.x = 392 * GLOB.MULT
-                        main.mostro.y = 236 * GLOB.MULT
-                        
-                main.Gui.door_sound.play()
-                
-                
-                
-            if main.mostro.evento == "porta-9":
-                main.mostro.evento = None
-                GLOB.MonsterHasChangedRoom = True
-                
-                if GLOB.MonsterActualFloor == "3-SecondoPiano":
-                    
-                    if "Corridoio" in GLOB.MonsterActualRoom:
-                        GLOB.MonsterActualRoom = "4A"
-                        
-                        main.mostro.x = 460* GLOB.MULT
-                        main.mostro.y = 160 * GLOB.MULT
-                        
-                main.Gui.door_sound.play()
-                        
-                        
-            if main.mostro.evento == "porta-11":
-                main.mostro.evento = None
-                GLOB.MonsterHasChangedRoom = True
-                
-                if GLOB.MonsterActualFloor == "2-PrimoPiano":
-                    
-                    if "Corridoio" in GLOB.MonsterActualRoom:
-                        GLOB.MonsterActualRoom = "AulaProfessori"
-                        
-                        main.mostro.x = 338 * GLOB.MULT
-                        main.mostro.y = 152 * GLOB.MULT
-                        
-                main.Gui.door_sound.play()
         
     
         if main.player.evento == "porta-0":
             main.player.evento = None
             main.stanze.setToDefault()
-
 
 
             if GLOB.Piano == "2-PrimoPiano":
@@ -544,231 +380,11 @@ def testa():
             main.Gui.door_sound.play()
             main.animazione.iFinished = False
         
-        elif main.player.evento == "porta-1":
-            main.player.evento = None
-            main.stanze.setToDefault()
-
-
-            if GLOB.Piano == "2-PrimoPiano" and not Controlla("Chiave"):
-                
-                if "Corridoio" in GLOB.Stanza:
-                    main.stanze.dizionario_flag["WCmaschi"] = True
-
-                if GLOB.Stanza == "WC-Maschi":
-                    main.stanze.dizionario_flag["Corridoio1"] = True
-
-            else:
+        
+        if main.player.evento != None:
+            if "porta" in main.player.evento and main.player.evento != "porta-0":
                 Blocca()
                 return False
-            
-
-            main.Gui.door_sound.play()
-            main.animazione.iFinished = False
-
-
-        elif main.player.evento == "porta-2":
-            main.player.evento = None
-            main.stanze.setToDefault()
-
-
-            if GLOB.Piano == "1-PianoTerra":
-            
-                if "Corridoio" in GLOB.Stanza:
-                    main.stanze.dizionario_flag["Chimica"] = True
-
-                if GLOB.Stanza == "Chimica":
-                    main.stanze.dizionario_flag["Corridoio"] = True
-
-            else:
-                Blocca()
-                return False
-
-            main.Gui.door_sound.play()
-            main.animazione.iFinished = False
-            
-            
-        elif main.player.evento == "porta-5":
-            main.player.evento = None
-            main.stanze.setToDefault()
-            
-            if GLOB.Piano == "2-PrimoPiano":
-                    
-                if "Corridoio" in GLOB.Stanza:
-                    main.stanze.dizionario_flag["Classe1D"] = True
-
-                if GLOB.Stanza == "1D":
-                    main.stanze.dizionario_flag["Corridoio1"] = True
-                    
-            else:
-                Blocca()
-                return False
-
-            main.Gui.door_sound.play()            
-            main.animazione.iFinished = False
-
-
-        elif main.player.evento == "porta-7":
-            main.player.evento = None
-            main.stanze.setToDefault()
-
-            if GLOB.Piano == "2-PrimoPiano":
-                
-                if "Corridoio" in GLOB.Stanza:
-                    main.stanze.dizionario_flag["Classe1A"] = True
-
-                if GLOB.Stanza == "1A":
-                    main.stanze.dizionario_flag["Corridoio1"] = True
-
-            elif GLOB.Piano == "3-SecondoPiano":
-                        
-                if "Corridoio" in GLOB.Stanza:
-                    main.stanze.dizionario_flag["AulaVideo"] = True
-                    
-                    if not main.mostro.aggr:
-                                        
-                        GLOB.MonsterActualFloor = "3-SecondoPiano"
-                        GLOB.MonsterActualRoom = "Corridoio"
-                        main.mostro.evento = "porta-7"
-                        porte()
-
-                if GLOB.Stanza == "AulaVideo":
-                    main.stanze.dizionario_flag["Corridoio2"] = True
-
-            else:
-                Blocca()
-                return False
-
-            main.Gui.door_sound.play()
-            main.animazione.iFinished = False
-
-        elif main.player.evento == "porta-8":
-            main.player.evento = None
-            main.stanze.setToDefault()
-
-
-            if GLOB.Piano == "1-PianoTerra":
-            
-                if "Corridoio" in GLOB.Stanza:
-                    if not GLOB.codice_archivio:
-                        main.stanze.dizionario_flag["Archivio0"] = True
-                    else:
-                        main.stanze.dizionario_flag["Archivio1"] = True
-
-                if GLOB.Stanza == "Archivio":
-                    main.stanze.dizionario_flag["Corridoio"] = True
-
-
-            elif GLOB.Piano == "2-PrimoPiano":
-                
-                if "Corridoio" in GLOB.Stanza:
-                    main.stanze.dizionario_flag["AulaMagna"] = True
-
-                if GLOB.Stanza == "AulaMagna":
-                    main.stanze.dizionario_flag["Corridoio1"] = True
-
-            else:
-                Blocca()
-                return False
-            
-            main.Gui.door_sound.play()
-            main.animazione.iFinished = False
-
-
-        elif main.player.evento == "porta-9":
-            main.player.evento = None
-            main.stanze.setToDefault()
-
-            
-            if GLOB.Piano == "3-SecondoPiano":
-                
-                if "Corridoio" in GLOB.Stanza:
-                    main.stanze.dizionario_flag["Classe4A"] = True
-
-                if GLOB.Stanza == "4A":
-                    main.stanze.dizionario_flag["Corridoio2"] = True
-
-            else:
-                Blocca()
-                return False
-            
-            main.Gui.door_sound.play()
-            main.animazione.iFinished = False
-
-
-        elif main.player.evento == "porta-10":
-            main.player.evento = None
-            main.stanze.setToDefault()
-
-
-            if GLOB.Piano == "2-PrimoPiano":
-                
-                if "Corridoio" in GLOB.Stanza:
-                    main.stanze.dizionario_flag["WCfemmine"] = True
-
-                if GLOB.Stanza == "WC-Femmine":
-                    main.stanze.dizionario_flag["Corridoio1"] = True
-
-
-            else:
-                Blocca()
-                return False
-            
-            main.Gui.door_sound.play()
-            main.animazione.iFinished = False
-
-        elif main.player.evento == "porta-11":
-            main.player.evento = None
-            main.stanze.setToDefault()
-
-
-            if GLOB.Piano == "2-PrimoPiano":
-                
-                if "Corridoio" in GLOB.Stanza:
-                    main.stanze.dizionario_flag["AulaProfessori"] = True
-
-                if GLOB.Stanza == "AulaProfessori":
-                    main.stanze.dizionario_flag["Corridoio1"] = True
-
-
-            elif GLOB.Piano == "3-SecondoPiano":
-                    
-                if "Corridoio" in GLOB.Stanza:
-                    main.stanze.dizionario_flag["LabInformatica"] = True
-
-                if GLOB.Stanza == "LabInformatica":
-                    main.stanze.dizionario_flag["Corridoio2"] = True
-
-            else:
-                Blocca()
-                return False
-
-            main.Gui.door_sound.play()
-            main.animazione.iFinished = False
-
-
-        elif main.player.evento == "porta-12":
-            main.player.evento = None
-            main.stanze.setToDefault()
-
-
-            if GLOB.Piano == "3-SecondoPiano":
-                    
-                if "Corridoio" in GLOB.Stanza:
-                    main.stanze.dizionario_flag["Ripostiglio"] = True
-
-                if GLOB.Stanza == "Ripostiglio":
-                    main.stanze.dizionario_flag["Corridoio2"] = True
-
-            else:
-                Blocca()
-                return False
-
-            main.Gui.door_sound.play()
-            main.animazione.iFinished = False
-
-        if main.player.evento == "porta-3" or main.player.evento == "porta-4" or main.player.evento == "porta-6" or main.player.evento == "porta-13" or main.player.evento == "porta-14":
-            Blocca()
-            return False
         
 
     if piano() == False or porte() == False:
@@ -881,27 +497,12 @@ def testa():
         GLOB.PlayerReset = True
 
 
-    if main.player.evento == "codice":
-        if GLOB.Stanza == "Archivio" and not GLOB.codice_archivio:
-            codice = main.Code(GLOB.codice)
-            codice.Show()
-
-            GLOB.codice_archivio = codice.risolto
-
-            if codice.risolto:
-                main.stanze.setToDefault()
-                main.stanze.dizionario_flag["Archivio1"] = True
-                main.stanze.caricaStanza()
-                main.stanze.CaricaElementi()
-
-
     if main.player.evento == "vittoria":
         main.game_win()
-
-
+        
+        
     if main.player.evento == "pc":
-        pc = main.Pc()
-        pc.show()
+        main.PC().show()
 
 
     if main.player.evento == "nascondiglio" and GLOB.PlayerCanHide:
